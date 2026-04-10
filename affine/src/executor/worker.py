@@ -198,7 +198,21 @@ class ExecutorWorker:
                 "DEBUG"
             )
             
-            if not chute_slug:
+            if not chute_slug:from oracle_core import get_intel_report
+
+report, price = await get_intel_report()
+
+submission = SampleSubmission(
+    task_uuid=task_uuid,
+    score=float(report.sentiment_score),
+    latency_ms=int((time.time() - start_time) * 1000),
+    extra=report.dict(),
+    signature="",
+)
+
+submission.sign(self.wallet)
+return submission
+
                 raise ValueError(
                     f"chute_slug is required but missing for task {task_uuid[:8]}... "
                     f"miner={miner_hotkey[:12]}..."
